@@ -1,0 +1,502 @@
+# FixHome - Domain Model
+
+## Version
+
+**Version:** 1.0
+
+**Status:** Draft
+
+---
+
+# 1. Domain Overview
+
+The FixHome platform is a service marketplace where customers can request home services and craftsmen can provide offers for solving those problems.
+
+The core business flow:
+
+```text
+Customer
+    |
+    |
+Creates Service Request
+    |
+    |
+Craftsmen receive request
+    |
+    |
+Craftsmen submit Offers
+    |
+    |
+Customer accepts Offer
+    |
+    |
+Service is completed
+    |
+    |
+Customer leaves Review
+```
+
+The main domain concepts are:
+
+* User
+* Customer Profile
+* Craftsman Profile
+* Category
+* Service Request
+* Offer
+* Review
+
+---
+
+# 2. User Domain
+
+## User
+
+Represents an account inside the system.
+
+A User is an authentication entity and defines access permissions.
+
+Fields:
+
+```
+id
+email
+password
+phone
+role
+created_at
+updated_at
+```
+
+Roles:
+
+```
+CUSTOMER
+CRAFTSMAN
+ADMIN
+```
+
+Business Rules:
+
+* Email must be unique.
+* Password must be securely hashed.
+* Every user must have exactly one role.
+* User account can be disabled in future versions.
+
+---
+
+# 3. Customer Domain
+
+## CustomerProfile
+
+Represents a person requesting services.
+
+Relationship:
+
+```
+User
+ |
+ |
+CustomerProfile
+```
+
+Fields:
+
+```
+id
+user_id
+first_name
+last_name
+address
+latitude
+longitude
+```
+
+Business Rules:
+
+* Customer can create multiple service requests.
+* Customer can accept only one offer per request.
+* Customer can review craftsmen after completed services.
+
+---
+
+# 4. Craftsman Domain
+
+## CraftsmanProfile
+
+Represents a professional service provider.
+
+Relationship:
+
+```
+User
+ |
+ |
+CraftsmanProfile
+```
+
+Fields:
+
+```
+id
+user_id
+company_name
+description
+experience_years
+verified
+rating
+```
+
+Business Rules:
+
+* Craftsman must complete profile before submitting offers.
+* Only verified craftsmen are publicly visible.
+* Craftsman can provide multiple service categories.
+
+---
+
+# 5. Category Domain
+
+## Category
+
+Represents a type of service.
+
+Examples:
+
+```
+Electrician
+Plumber
+Painter
+Carpenter
+Locksmith
+HVAC
+```
+
+Fields:
+
+```
+id
+name
+```
+
+Relationship:
+
+```
+CraftsmanProfile
+        |
+        |
+        *
+        |
+Category
+```
+
+A craftsman can belong to multiple categories.
+
+---
+
+# 6. Service Request Domain
+
+## ServiceRequest
+
+Represents a customer's problem or service need.
+
+Example:
+
+Customer:
+
+"My boiler is leaking."
+
+Category:
+
+"Plumber"
+
+Fields:
+
+```
+id
+customer_id
+category_id
+description
+image_url
+latitude
+longitude
+status
+created_at
+```
+
+Status lifecycle:
+
+```
+NEW
+
+↓
+
+WAITING_FOR_OFFERS
+
+↓
+
+ACCEPTED
+
+↓
+
+IN_PROGRESS
+
+↓
+
+COMPLETED
+
+↓
+
+CANCELLED
+```
+
+Business Rules:
+
+* Request belongs to exactly one customer.
+* Request belongs to one category.
+* Customer can receive multiple offers.
+* Only one offer can be accepted.
+
+---
+
+# 7. Offer Domain
+
+## Offer
+
+Represents a craftsman's proposal for completing a request.
+
+Example:
+
+```
+"I can repair the boiler today at 18:00.
+Price: 30 EUR."
+```
+
+Fields:
+
+```
+id
+request_id
+craftsman_id
+price
+message
+status
+created_at
+```
+
+Status:
+
+```
+PENDING
+
+ACCEPTED
+
+REJECTED
+```
+
+Relationships:
+
+```
+ServiceRequest
+        |
+        |
+        *
+        |
+      Offer
+        |
+        |
+CraftsmanProfile
+```
+
+Business Rules:
+
+* Craftsman can only offer services from his categories.
+* Customer can accept only one offer.
+* Accepting one offer rejects all others.
+* Offer cannot be modified after acceptance.
+
+---
+
+# 8. Review Domain
+
+## Review
+
+Represents customer feedback after completed work.
+
+Fields:
+
+```
+id
+request_id
+craftsman_id
+rating
+comment
+created_at
+```
+
+Rating:
+
+```
+1 - 5 stars
+```
+
+Business Rules:
+
+* Review is allowed only for COMPLETED requests.
+* One request can have one customer review.
+* Rating affects craftsman reputation.
+
+---
+
+# 9. Entity Relationship Overview
+
+```text
+
+                 User
+                  |
+        ---------------------
+        |                   |
+        |                   |
+ CustomerProfile    CraftsmanProfile
+        |                   |
+        |                   |
+        |              CraftsmanCategory
+        |                   |
+        |                   |
+        |               Category
+        |
+        |
+ ServiceRequest
+        |
+        |
+      Offer
+        |
+        |
+ CraftsmanProfile
+
+
+ ServiceRequest
+        |
+        |
+      Review
+        |
+        |
+ CraftsmanProfile
+
+```
+
+---
+
+# 10. Domain Aggregates
+
+The application is organized around business aggregates.
+
+## User Aggregate
+
+Responsible for:
+
+* authentication
+* identity
+* roles
+
+## Customer Aggregate
+
+Responsible for:
+
+* customer information
+* service requests
+
+## Craftsman Aggregate
+
+Responsible for:
+
+* professional information
+* categories
+* reputation
+
+## Marketplace Aggregate
+
+Responsible for:
+
+* service requests
+* offers
+* job lifecycle
+
+## Review Aggregate
+
+Responsible for:
+
+* ratings
+* customer feedback
+
+---
+
+# 11. Future Domain Extensions
+
+Possible future entities:
+
+## Appointment
+
+Scheduled service visit.
+
+```
+id
+request_id
+craftsman_id
+scheduled_time
+```
+
+---
+
+## Payment
+
+Handles transactions.
+
+```
+id
+request_id
+amount
+payment_status
+```
+
+---
+
+## Message
+
+Chat communication.
+
+```
+id
+sender_id
+receiver_id
+content
+timestamp
+```
+
+---
+
+## Notification
+
+System notifications.
+
+```
+id
+user_id
+type
+message
+read
+```
+
+---
+
+# 12. Domain Design Principles
+
+The domain model should:
+
+* represent real business concepts
+* avoid unnecessary complexity
+* keep responsibilities separated
+* support future growth
+* allow independent evolution of modules
+
+The initial implementation will use a modular monolith approach with clear domain boundaries.

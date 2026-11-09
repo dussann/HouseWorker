@@ -1,28 +1,22 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-.expo
-dist
-dist-ssr
-*.local
+# Local configuration and credentials
 .env
 .env.*
 !.env.example
+*.key
+*.pem
+*service-account*.json
+/frontend/google-services.json
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Local data and generated files
+/backend/target/
+/backend/uploads/
+/frontend/node_modules/
+/frontend/.expo/
+/frontend/dist/
+/frontend/dist-ssr/
+/frontend/execution-report.txt
+*.log
+
+# Local editor settings
+/.vscode/
+.idea/

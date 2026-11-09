@@ -1,0 +1,358 @@
+# FixHome - System Architecture
+
+## Version
+
+**Version:** 1.0
+
+**Status:** Draft
+
+**Last Updated:** August 2026
+
+---
+
+# 1. Overview
+
+FixHome follows a layered architecture with a clear separation between presentation, business logic, and data access.
+
+The application is designed as a modular monolith. Each business domain is isolated into its own package, allowing future migration to microservices if required.
+
+The same backend API serves:
+
+* React Native mobile application
+* React Admin Panel
+* Future third-party integrations
+
+---
+
+# 2. High-Level Architecture
+
+```text
+                +------------------------+
+                | React Native App       |
+                | Customer / Craftsman   |
+                +-----------+------------+
+                            |
+                            |
+                     HTTPS / REST API
+                            |
+                +-----------v------------+
+                | Spring Boot Backend    |
+                | Java 21                |
+                +-----------+------------+
+                            |
+        +-------------------+-------------------+
+        |                   |                   |
+        |              Redis Cache         Cloudflare R2
+        |                                   Image Storage
+        |
+    PostgreSQL Database
+```
+
+---
+
+# 3. Technology Stack
+
+## Backend
+
+* Java 21
+* Spring Boot 3
+* Spring MVC
+* Spring Security
+* JWT Authentication
+* Spring Data JPA
+* Hibernate
+* PostgreSQL
+* Flyway
+* Redis
+* WebSocket (future)
+* Firebase Cloud Messaging (future)
+
+---
+
+## Mobile Application
+
+* React Native
+* TypeScript
+
+---
+
+## Admin Panel
+
+* React
+* TypeScript
+* Material UI
+
+---
+
+# 4. Architectural Principles
+
+The application follows these principles:
+
+* Layered Architecture
+* Separation of Concerns
+* SOLID Principles
+* Dependency Injection
+* Domain-Oriented Package Structure
+* RESTful API Design
+* Stateless Authentication
+* Clean Code
+
+---
+
+# 5. Backend Layers
+
+Every module follows the same internal structure.
+
+```text
+Controller
+      │
+      ▼
+Service
+      │
+      ▼
+Repository
+      │
+      ▼
+PostgreSQL
+```
+
+Responsibilities:
+
+**Controller**
+
+* Exposes REST endpoints
+* Validates requests
+* Maps DTOs
+
+**Service**
+
+* Implements business logic
+* Handles transactions
+* Coordinates repositories
+
+**Repository**
+
+* Database access
+* Spring Data JPA
+
+---
+
+# 6. Package Structure
+
+```text
+com.fixhome
+
+├── common
+├── config
+├── security
+├── auth
+├── user
+├── customer
+├── craftsman
+├── category
+├── request
+├── offer
+├── review
+├── notification
+├── chat
+└── admin
+```
+
+Each module should contain:
+
+```text
+controller/
+service/
+repository/
+entity/
+dto/
+mapper/
+exception/
+```
+
+---
+
+# 7. Domain Modules
+
+## Authentication
+
+Responsible for:
+
+* Registration
+* Login
+* JWT generation
+* Token validation
+
+---
+
+## User
+
+Responsible for:
+
+* User accounts
+* Roles
+* Credentials
+
+---
+
+## Customer
+
+Responsible for:
+
+* Customer profile
+* Address
+* Location
+
+---
+
+## Craftsman
+
+Responsible for:
+
+* Professional profile
+* Categories
+* Verification
+* Ratings
+
+---
+
+## Category
+
+Responsible for service categories.
+
+---
+
+## Request
+
+Responsible for:
+
+* Service requests
+* Request lifecycle
+* Images
+* Customer location
+
+---
+
+## Offer
+
+Responsible for:
+
+* Offer creation
+* Offer acceptance
+* Offer status
+
+---
+
+## Review
+
+Responsible for ratings and comments.
+
+---
+
+## Notification
+
+Future module.
+
+Will support:
+
+* Push notifications
+* Email notifications
+
+---
+
+## Chat
+
+Future module.
+
+Will use WebSockets.
+
+---
+
+# 8. Security Architecture
+
+Authentication:
+
+JWT Token
+
+Authorization:
+
+Role-Based Access Control (RBAC)
+
+Roles:
+
+* CUSTOMER
+* CRAFTSMAN
+* ADMIN
+
+Passwords:
+
+* BCrypt hashing
+
+Every protected endpoint requires a valid JWT.
+
+---
+
+# 9. Data Flow Example
+
+Customer creates request.
+
+↓
+
+Backend validates request.
+
+↓
+
+Request is stored.
+
+↓
+
+Nearby craftsmen receive notification (future).
+
+↓
+
+Craftsmen submit offers.
+
+↓
+
+Customer accepts one offer.
+
+↓
+
+Job progresses.
+
+↓
+
+Customer leaves review.
+
+---
+
+# 10. Scalability
+
+The architecture should allow future integration of:
+
+* Payment providers
+* Maps
+* Search engine
+* Push notifications
+* AI services
+* Analytics
+
+without requiring major architectural changes.
+
+---
+
+# 11. Future Evolution
+
+Current architecture:
+
+Modular Monolith
+
+Possible future evolution:
+
+* Authentication Service
+* User Service
+* Marketplace Service
+* Notification Service
+* Chat Service
+
+The application should be designed so that each module can later become an independent microservice if business requirements justify the additional complexity.

@@ -1,0 +1,25 @@
+export const designTokens = {
+  colors: {
+    background: '#F6F8FC',
+    surface: '#FFFFFF',
+    ink: '#0B2A5B',
+    muted: '#5B6B86',
+    border: '#E0E8F3',
+    primary: '#1A5FD8',
+    primaryDark: '#0B2A5B',
+    primarySoft: '#E6F0FD',
+    customerSoft: '#EFF5FE',
+    accent: '#8FB8F5',
+    danger: '#F43F5E',
+    dangerSoft: '#FFE4E9',
+    successSoft: '#DCFCE7',
+  },
+  radius: {
+    control: 12,
+    card: 20,
+    large: 28,
+    pill: 999,
+  },
+  controlHeight: 48,
+  fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
+} as const;

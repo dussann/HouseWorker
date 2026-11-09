@@ -1,0 +1,515 @@
+# FixHome - Security Design
+
+## Version
+
+**Version:** 1.0
+
+**Status:** Draft
+
+---
+
+# 1. Security Overview
+
+Security is a core part of the FixHome platform.
+
+The system must protect:
+
+* User accounts
+* Personal information
+* Service requests
+* Customer locations
+* Craftsman data
+* Communication between users
+
+The security model is based on:
+
+* JWT authentication
+* Role-Based Access Control (RBAC)
+* Password hashing
+* Backend authorization rules
+* Secure API communication
+
+---
+
+# 2. Authentication Architecture
+
+FixHome uses stateless authentication.
+
+Authentication mechanism:
+
+```text
+JWT Bearer Token
+```
+
+Flow:
+
+```text
+User
+ |
+ |
+Login request
+ |
+ |
+Spring Security
+ |
+ |
+Validate credentials
+ |
+ |
+Generate JWT
+ |
+ |
+Return token
+ |
+ |
+Client stores token
+ |
+ |
+Token sent with every request
+```
+
+---
+
+# 3. JWT Token Design
+
+The system uses two token types:
+
+## Access Token
+
+Purpose:
+
+* API authentication
+* Short lifetime
+
+Example:
+
+```text
+Expiration:
+15 minutes
+```
+
+Contains:
+
+```json
+{
+ "userId":123,
+ "email":"user@test.com",
+ "role":"CUSTOMER"
+}
+```
+
+---
+
+## Refresh Token
+
+Purpose:
+
+* Generate new access tokens
+* Maintain user session
+
+Example:
+
+```text
+Expiration:
+7-30 days
+```
+
+Future implementation may store refresh tokens in:
+
+* PostgreSQL
+* Redis
+
+---
+
+# 4. Password Security
+
+Passwords are never stored as plain text.
+
+Technology:
+
+```text
+BCrypt
+```
+
+Example:
+
+Original:
+
+```text
+mypassword123
+```
+
+Stored:
+
+```text
+$2a$10$8Hd93....
+```
+
+Rules:
+
+* Minimum password length
+* Password hashing before storage
+* Never return password fields in API responses
+
+---
+
+# 5. User Roles
+
+The system supports:
+
+```text
+CUSTOMER
+
+CRAFTSMAN
+
+ADMIN
+```
+
+---
+
+# 6. Role-Based Access Control
+
+## CUSTOMER permissions
+
+Allowed:
+
+```
+Create service request
+
+View own requests
+
+View received offers
+
+Accept offer
+
+Create review
+
+Update own profile
+```
+
+Forbidden:
+
+```
+Manage other users
+
+Verify craftsmen
+
+Create offers
+```
+
+---
+
+## CRAFTSMAN permissions
+
+Allowed:
+
+```
+Manage own profile
+
+View matching requests
+
+Create offers
+
+Manage accepted jobs
+
+View reviews
+```
+
+Forbidden:
+
+```
+Verify craftsmen
+
+Manage categories
+
+Access other craftsmen data
+```
+
+---
+
+## ADMIN permissions
+
+Allowed:
+
+```
+Manage users
+
+Verify craftsmen
+
+Manage categories
+
+View system activity
+```
+
+---
+
+# 7. Endpoint Security Rules
+
+Example:
+
+```java
+@PreAuthorize("hasRole('CUSTOMER')")
+@PostMapping("/service-requests")
+```
+
+Only customers can create requests.
+
+---
+
+Example:
+
+```java
+@PreAuthorize("hasRole('CRAFTSMAN')")
+@PostMapping("/offers")
+```
+
+Only craftsmen can send offers.
+
+---
+
+Example:
+
+```java
+@PreAuthorize("hasRole('ADMIN')")
+@PatchMapping("/craftsmen/{id}/verify")
+```
+
+Only administrators can verify craftsmen.
+
+---
+
+# 8. Resource Ownership Rules
+
+Role checking alone is not enough.
+
+The system must verify ownership.
+
+Example:
+
+Customer A:
+
+```
+GET /service-requests/100
+```
+
+Customer B must not be able to see it.
+
+Rule:
+
+```text
+User can access only resources they own
+```
+
+Examples:
+
+Customer:
+
+* own requests
+* own profile
+
+Craftsman:
+
+* own profile
+* own offers
+* assigned jobs
+
+---
+
+# 9. Spring Security Architecture
+
+Recommended structure:
+
+```text
+security
+
+├── SecurityConfig
+
+├── JwtAuthenticationFilter
+
+├── JwtService
+
+├── CustomUserDetailsService
+
+├── AuthenticationEntryPoint
+
+└── AccessDeniedHandler
+```
+
+---
+
+# 10. Request Security Flow
+
+Example API call:
+
+```
+GET /api/v1/service-requests
+```
+
+Flow:
+
+```text
+Request
+
+↓
+
+JWT Filter
+
+↓
+
+Validate Token
+
+↓
+
+Load User
+
+↓
+
+Check Role
+
+↓
+
+Controller
+
+↓
+
+Service
+
+↓
+
+Database
+```
+
+---
+
+# 11. API Security Requirements
+
+All production communication must use:
+
+```text
+HTTPS
+```
+
+Requirements:
+
+* Validate all input
+* Prevent SQL injection
+* Prevent unauthorized access
+* Do not expose sensitive data
+* Validate uploaded files
+
+---
+
+# 12. File Upload Security
+
+Images uploaded by customers require validation.
+
+Checks:
+
+* Maximum file size
+* Allowed formats
+* Malware scanning (future)
+* Unique file names
+
+Allowed:
+
+```
+JPEG
+PNG
+WEBP
+```
+
+Storage:
+
+```
+Cloudflare R2 / Amazon S3
+```
+
+---
+
+# 13. Future Authentication Improvements
+
+Possible future additions:
+
+## Social Login
+
+Providers:
+
+* Google
+* Apple
+
+---
+
+## Two Factor Authentication
+
+For:
+
+* Admin accounts
+* High-value operations
+
+---
+
+## Phone Verification
+
+For:
+
+* Customer trust
+* Craftsman verification
+
+---
+
+# 14. Audit and Monitoring
+
+Future system should track:
+
+* Login attempts
+* Failed authentication
+* Admin actions
+* Profile changes
+
+Possible technologies:
+
+* Spring Audit
+* ELK Stack
+* Application monitoring tools
+
+---
+
+# 15. Security Principles
+
+The system follows:
+
+* Least privilege principle
+* Defense in depth
+* Secure by default
+* Separation of authentication and authorization
+* Never trust client input
+
+---
+
+# 16. Security Evolution
+
+MVP:
+
+```
+JWT + Roles + BCrypt
+```
+
+Future:
+
+```
+JWT
++
+Refresh Tokens
++
+OAuth
++
+2FA
++
+Audit System
+```
+
+---
+
+# Conclusion
+
+The security architecture provides a strong foundation for the FixHome marketplace while keeping the initial implementation simple enough for an MVP.

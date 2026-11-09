@@ -1,0 +1,451 @@
+# FixHome - Architecture Decision Log
+
+## Version
+
+**Version:** 1.0
+
+**Status:** Living Document
+
+**Purpose:**
+
+This document records important technical and architectural decisions made during the development of FixHome.
+
+Each decision should explain:
+
+* What was decided
+* Why it was decided
+* What alternatives were considered
+* Future consequences
+
+---
+
+# Decision Format
+
+Each decision follows this structure:
+
+```text
+Decision ID:
+
+Date:
+
+Title:
+
+Context:
+
+Decision:
+
+Alternatives Considered:
+
+Consequences:
+```
+
+---
+
+# Decision #001
+
+## Date
+
+August 2026
+
+## Title
+
+Use Modular Monolith Architecture
+
+## Context
+
+FixHome is a marketplace platform that may grow significantly in the future.
+
+Possible future modules:
+
+* Authentication
+* Marketplace
+* Notifications
+* Chat
+* Payments
+
+The system needs clean boundaries without unnecessary initial complexity.
+
+## Decision
+
+Implement the backend as a modular monolith.
+
+The application will contain clearly separated business modules:
+
+* auth
+* user
+* customer
+* craftsman
+* category
+* request
+* offer
+* review
+
+## Alternatives Considered
+
+### Microservices Architecture
+
+Rejected for MVP.
+
+Reason:
+
+* Higher operational complexity
+* More infrastructure requirements
+* Slower initial development
+
+### Single Large Application Without Modules
+
+Rejected.
+
+Reason:
+
+* Poor maintainability
+* Difficult future scaling
+
+## Consequences
+
+Positive:
+
+* Faster development
+* Easier deployment
+* Clear domain boundaries
+* Future extraction into microservices is possible
+
+Negative:
+
+* Some future scaling limitations
+
+---
+
+# Decision #002
+
+## Date
+
+August 2026
+
+## Title
+
+Use PostgreSQL as Primary Database
+
+## Context
+
+FixHome requires strong relational data consistency.
+
+Important relationships:
+
+* Users
+* Profiles
+* Requests
+* Offers
+* Reviews
+
+## Decision
+
+Use PostgreSQL as the primary database.
+
+## Alternatives Considered
+
+### MongoDB
+
+Rejected.
+
+Reason:
+
+The application has highly relational business data.
+
+### MySQL
+
+Possible alternative.
+
+PostgreSQL selected because of:
+
+* Strong SQL capabilities
+* Excellent JSON support
+* Advanced indexing options
+* Good Spring ecosystem support
+
+## Consequences
+
+Positive:
+
+* Strong data integrity
+* Reliable transactions
+* Excellent relational modeling
+
+Negative:
+
+* Requires proper schema design
+
+---
+
+# Decision #003
+
+## Date
+
+August 2026
+
+## Title
+
+Use Spring Boot 3 + Java 21
+
+## Context
+
+The backend requires:
+
+* Long-term maintainability
+* Enterprise-level architecture
+* Security support
+
+## Decision
+
+Use:
+
+* Java 21
+* Spring Boot 3
+* Spring Security
+* Spring Data JPA
+
+## Alternatives Considered
+
+### Node.js Backend
+
+Rejected.
+
+Reason:
+
+The project goal is to build a strong Java enterprise backend.
+
+### .NET
+
+Possible alternative.
+
+Java ecosystem selected.
+
+## Consequences
+
+Positive:
+
+* Mature ecosystem
+* Strong typing
+* Excellent enterprise support
+
+Negative:
+
+* More verbose compared to some frameworks
+
+---
+
+# Decision #004
+
+## Date
+
+August 2026
+
+## Title
+
+Use JWT Authentication
+
+## Context
+
+The platform requires authentication for:
+
+* Mobile application
+* Admin panel
+* Future integrations
+
+## Decision
+
+Use:
+
+* JWT Access Tokens
+* Refresh Tokens
+* Spring Security
+
+## Alternatives Considered
+
+### Server Sessions
+
+Rejected.
+
+Reason:
+
+Less suitable for mobile clients and distributed systems.
+
+### OAuth Only
+
+Rejected for MVP.
+
+Can be added later.
+
+## Consequences
+
+Positive:
+
+* Stateless API
+* Mobile friendly
+* Scalable
+
+Negative:
+
+* Token management complexity
+
+---
+
+# Decision #005
+
+## Date
+
+August 2026
+
+## Title
+
+React Native for Mobile Application
+
+## Context
+
+The product requires mobile applications for:
+
+* Customers
+* Craftsmen
+
+## Decision
+
+Use:
+
+* React Native
+* TypeScript
+
+## Alternatives Considered
+
+### Flutter
+
+Possible alternative.
+
+### Native Android/iOS
+
+Rejected for MVP due to development cost.
+
+## Consequences
+
+Positive:
+
+* Cross-platform development
+* Shared codebase
+* Faster MVP delivery
+
+Negative:
+
+* Some native features may require platform-specific code
+
+---
+
+# Decision #006
+
+## Date
+
+August 2026
+
+## Title
+
+Do Not Implement Advanced Features in MVP
+
+## Context
+
+Potential features:
+
+* Payments
+* AI matching
+* Chat
+* Maps
+* Notifications
+
+## Decision
+
+Focus MVP on:
+
+Customer request → Craftsman offer → Completed service → Review
+
+## Alternatives Considered
+
+Building all features immediately.
+
+Rejected.
+
+Reason:
+
+High risk of delaying product validation.
+
+## Consequences
+
+Positive:
+
+* Faster market validation
+* Lower complexity
+
+Negative:
+
+* Some users may expect advanced functionality
+
+---
+
+# Decision #007
+
+## Date
+
+August 2026
+
+## Title
+
+Use Flyway for Database Migrations
+
+## Context
+
+Database schema will evolve during development.
+
+## Decision
+
+All database changes must be managed through Flyway migrations.
+
+## Alternatives Considered
+
+Manual database changes.
+
+Rejected.
+
+Reason:
+
+Not reproducible and difficult for team development.
+
+## Consequences
+
+Positive:
+
+* Version controlled database
+* Safe deployments
+
+Negative:
+
+* Requires migration discipline
+
+---
+
+# Future Decisions
+
+Future decisions to document:
+
+* Cloud provider selection
+* CI/CD platform
+* Payment provider
+* Map provider
+* Search technology
+* Notification architecture
+* Chat implementation
+* Microservice extraction
+* Scaling strategy
+
+---
+
+# Final Note
+
+This document should evolve together with the project.
+
+Every significant architectural decision should be recorded to preserve project knowledge and maintain long-term consistency.

@@ -1,0 +1,437 @@
+# FixHome - Development Roadmap
+
+## Version
+
+**Version:** 1.0
+
+**Status:** Draft
+
+---
+
+# 1. Development Strategy
+
+The FixHome development process follows an incremental approach.
+
+The goal is to build a functional marketplace MVP first and gradually introduce advanced capabilities.
+
+Development priorities:
+
+1. Core marketplace workflow
+2. Security and reliability
+3. User experience
+4. Advanced platform features
+
+---
+
+# 2. MVP Definition
+
+The MVP must support the complete service marketplace flow.
+
+Core workflow:
+
+```text id="r5h2q9"
+Customer Registration
+
+        |
+
+Create Service Request
+
+        |
+
+Craftsman Receives Request
+
+        |
+
+Craftsman Sends Offer
+
+        |
+
+Customer Accepts Offer
+
+        |
+
+Service Completed
+
+        |
+
+Customer Leaves Review
+```
+
+---
+
+# 3. Phase 1 - Project Foundation
+
+## Goal
+
+Create a clean development foundation.
+
+Tasks:
+
+* Create Git repository
+* Setup Spring Boot project
+* Configure Java 21
+* Configure Maven
+* Configure project structure
+* Setup PostgreSQL
+* Setup Flyway
+* Setup Docker Compose
+
+Deliverables:
+
+* Running backend application
+* Connected database
+* Initial migration
+
+---
+
+# 4. Phase 2 - Security and Authentication
+
+## Goal
+
+Implement secure user access.
+
+Tasks:
+
+* User entity
+* Role entity
+* Registration
+* Login
+* JWT authentication
+* Password hashing
+* Spring Security configuration
+* Authorization rules
+
+Roles:
+
+```text id="5htl70"
+CUSTOMER
+
+CRAFTSMAN
+
+ADMIN
+```
+
+Deliverables:
+
+* Secure API
+* Protected endpoints
+* Authentication tests
+
+---
+
+# 5. Phase 3 - User Management
+
+## Goal
+
+Create user profiles.
+
+Tasks:
+
+Customer:
+
+* Create profile
+* Update profile
+* Manage address
+
+Craftsman:
+
+* Create professional profile
+* Add description
+* Add experience
+* Select categories
+
+Admin:
+
+* View users
+
+Deliverables:
+
+* Complete user module
+
+---
+
+# 6. Phase 4 - Marketplace Core
+
+## Goal
+
+Implement the main business functionality.
+
+Tasks:
+
+Service Requests:
+
+* Create request
+* Upload image reference
+* Select category
+* Track status
+
+Offers:
+
+* Craftsman views requests
+* Send offer
+* Accept/reject offer
+
+Status lifecycle:
+
+```text id="l9vczn"
+NEW
+
+WAITING_FOR_OFFERS
+
+ACCEPTED
+
+IN_PROGRESS
+
+COMPLETED
+
+CANCELLED
+```
+
+Deliverables:
+
+* Complete marketplace workflow
+
+---
+
+# 7. Phase 5 - Reviews
+
+## Goal
+
+Build trust system.
+
+Tasks:
+
+* Create review
+* Rating validation
+* Calculate craftsman rating
+* Display reviews
+
+Rules:
+
+* Only completed services can be reviewed
+
+Deliverables:
+
+* Reputation system
+
+---
+
+# 8. Phase 6 - Backend Improvements
+
+## Goal
+
+Prepare backend for production.
+
+Tasks:
+
+* Global exception handling
+* DTO validation
+* Logging
+* API documentation
+* Swagger/OpenAPI
+* Unit tests
+* Integration tests
+
+Deliverables:
+
+* Production-ready backend API
+
+---
+
+# 9. Phase 7 - React Native Application
+
+## Goal
+
+Create mobile application.
+
+Technology:
+
+```text id="3j2k4a"
+React Native
+
+TypeScript
+```
+
+---
+
+## Customer Application
+
+Screens:
+
+* Login
+* Registration
+* Dashboard
+* Create request
+* My requests
+* Offers
+* Request details
+* Profile
+* Review
+
+---
+
+## Craftsman Application
+
+Screens:
+
+* Registration
+* Onboarding
+* Available requests
+* Send offer
+* Active jobs
+* Profile
+* Reviews
+
+---
+
+# 10. Phase 8 - Admin Panel
+
+Technology:
+
+```text id="x6vxq9"
+React
+
+Material UI
+```
+
+Features:
+
+* User management
+* Craftsman verification
+* Category management
+* Platform monitoring
+
+---
+
+# 11. Phase 9 - Advanced Features
+
+After MVP validation.
+
+---
+
+## Real-Time Chat
+
+Technology:
+
+```text id="j9bh4m"
+WebSocket
+```
+
+Features:
+
+* Customer-craftsman conversation
+* Message history
+* Notifications
+
+---
+
+## Push Notifications
+
+Technology:
+
+```text id="zq2m4s"
+Firebase Cloud Messaging
+```
+
+Examples:
+
+* New offer received
+* Offer accepted
+* Job status changed
+
+---
+
+## Maps Integration
+
+Features:
+
+* Customer location
+* Nearby craftsmen
+* Route navigation
+
+Possible technologies:
+
+* Google Maps API
+* OpenStreetMap
+
+---
+
+## Payments
+
+Future:
+
+* Online payments
+* Invoices
+* Transaction history
+
+---
+
+# 12. Testing Strategy
+
+Testing levels:
+
+## Unit Tests
+
+Coverage:
+
+* Services
+* Business rules
+* Validators
+
+---
+
+## Integration Tests
+
+Coverage:
+
+* REST API
+* Database operations
+* Security
+
+---
+
+## End-to-End Tests
+
+Future:
+
+* Complete customer flow
+* Complete craftsman flow
+
+---
+
+# 13. Definition of Done
+
+A feature is complete when:
+
+* Code is implemented
+* Tests are written
+* Documentation is updated
+* API is documented
+* Security rules are verified
+
+---
+
+# 14. Development Principles
+
+The project follows:
+
+* Build MVP first
+* Avoid unnecessary complexity
+* Keep architecture clean
+* Automate repetitive tasks
+* Document important decisions
+* Refactor continuously
+
+---
+
+# 15. Long-Term Goal
+
+The roadmap should evolve based on:
+
+* User feedback
+* Market validation
+* Business requirements
+
+The priority is not building the biggest system.
+
+The priority is building a useful and reliable service marketplace.

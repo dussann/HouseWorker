@@ -1,0 +1,614 @@
+# FixHome - REST API Specification
+
+## Version
+
+**Version:** 1.0
+
+**Status:** Draft
+
+---
+
+# 1. API Overview
+
+FixHome backend exposes a REST API used by:
+
+* React Native mobile application
+* React Admin panel
+* Future integrations
+
+Communication format:
+
+```text
+HTTP + JSON
+```
+
+Base URL:
+
+```text
+/api/v1
+```
+
+Example:
+
+```text
+GET /api/v1/service-requests
+```
+
+---
+
+# 2. Authentication
+
+Authentication mechanism:
+
+```text
+JWT Bearer Token
+```
+
+Request example:
+
+```http
+Authorization: Bearer {jwt_token}
+```
+
+Public endpoints:
+
+```text
+POST /auth/register
+
+POST /auth/login
+```
+
+Protected endpoints require authentication.
+
+---
+
+# 3. API Response Standard
+
+Successful response:
+
+```json
+{
+  "data": {},
+  "message": "Success"
+}
+```
+
+Error response:
+
+```json
+{
+  "timestamp": "2026-08-02T20:00:00",
+  "status": 400,
+  "error": "Validation failed",
+  "path": "/api/v1/service-requests"
+}
+```
+
+---
+
+# 4. Authentication API
+
+## Register User
+
+### POST
+
+```
+/auth/register
+```
+
+Request:
+
+```json
+{
+  "email": "user@test.com",
+  "password": "password123",
+  "phone": "+38160000000",
+  "role": "CUSTOMER"
+}
+```
+
+Response:
+
+```json
+{
+  "id": 1,
+  "email": "user@test.com",
+  "role": "CUSTOMER"
+}
+```
+
+---
+
+## Login
+
+### POST
+
+```
+/auth/login
+```
+
+Request:
+
+```json
+{
+  "email": "user@test.com",
+  "password": "password123"
+}
+```
+
+Response:
+
+```json
+{
+  "accessToken": "jwt-token",
+  "refreshToken": "refresh-token"
+}
+```
+
+---
+
+# 5. User API
+
+## Get Current User
+
+### GET
+
+```
+/users/me
+```
+
+Response:
+
+```json
+{
+  "id":1,
+  "email":"user@test.com",
+  "role":"CUSTOMER"
+}
+```
+
+---
+
+# 6. Customer API
+
+## Get Customer Profile
+
+### GET
+
+```
+/customers/profile
+```
+
+---
+
+## Update Customer Profile
+
+### PUT
+
+```
+/customers/profile
+```
+
+Request:
+
+```json
+{
+  "firstName":"Petar",
+  "lastName":"Petrovic",
+  "address":"Belgrade"
+}
+```
+
+---
+
+# 7. Craftsman API
+
+## Create Craftsman Profile
+
+### POST
+
+```
+/craftsmen/profile
+```
+
+Request:
+
+```json
+{
+  "companyName":"Petar Services",
+  "description":"Electrical repairs",
+  "experienceYears":10
+}
+```
+
+---
+
+## Get Craftsman Profile
+
+### GET
+
+```
+/craftsmen/{id}
+```
+
+---
+
+## Get Craftsman Requests
+
+### GET
+
+```
+/craftsmen/requests
+```
+
+Returns matching service requests.
+
+---
+
+# 8. Category API
+
+## Get Categories
+
+### GET
+
+```
+/categories
+```
+
+Response:
+
+```json
+[
+ {
+  "id":1,
+  "name":"Plumber"
+ }
+]
+```
+
+---
+
+# 9. Service Request API
+
+## Create Service Request
+
+### POST
+
+```
+/service-requests
+```
+
+Customer only.
+
+Request:
+
+```json
+{
+ "categoryId":2,
+ "description":"Water leaking from boiler",
+ "imageUrl":"image.jpg",
+ "latitude":44.7866,
+ "longitude":20.4489
+}
+```
+
+Response:
+
+```json
+{
+ "id":10,
+ "status":"NEW"
+}
+```
+
+---
+
+## Get Customer Requests
+
+### GET
+
+```
+/service-requests/my
+```
+
+---
+
+## Get Request Details
+
+### GET
+
+```
+/service-requests/{id}
+```
+
+---
+
+## Change Request Status
+
+### PATCH
+
+```
+/service-requests/{id}/status
+```
+
+Request:
+
+```json
+{
+ "status":"IN_PROGRESS"
+}
+```
+
+---
+
+# 10. Offer API
+
+## Create Offer
+
+### POST
+
+```
+/offers
+```
+
+Craftsman only.
+
+Request:
+
+```json
+{
+ "requestId":10,
+ "price":30,
+ "message":"I can come today at 18:00"
+}
+```
+
+---
+
+## Get Offers For Request
+
+### GET
+
+```
+/service-requests/{id}/offers
+```
+
+---
+
+## Accept Offer
+
+### PATCH
+
+```
+/offers/{id}/accept
+```
+
+Business rules:
+
+* Only customer can accept.
+* Only one offer can be accepted.
+* Other offers become rejected.
+
+---
+
+# 11. Review API
+
+## Create Review
+
+### POST
+
+```
+/reviews
+```
+
+Request:
+
+```json
+{
+ "requestId":10,
+ "rating":5,
+ "comment":"Excellent service"
+}
+```
+
+Rules:
+
+* Request must be COMPLETED.
+* Only customer can review.
+
+---
+
+## Get Craftsman Reviews
+
+### GET
+
+```
+/craftsmen/{id}/reviews
+```
+
+---
+
+# 12. Admin API
+
+## Users Management
+
+```
+GET /admin/users
+```
+
+---
+
+## Verify Craftsman
+
+```
+PATCH /admin/craftsmen/{id}/verify
+```
+
+---
+
+## Manage Categories
+
+```
+POST /admin/categories
+```
+
+```
+DELETE /admin/categories/{id}
+```
+
+---
+
+# 13. Future API Modules
+
+## Chat
+
+Future:
+
+```
+/chat/conversations
+/chat/messages
+```
+
+Technology:
+
+```text
+WebSocket
+```
+
+---
+
+## Notifications
+
+Future:
+
+```
+/notifications
+```
+
+Technology:
+
+```text
+Firebase Cloud Messaging
+```
+
+---
+
+## Payments
+
+Future:
+
+```
+/payments
+```
+
+---
+
+# 14. API Security Rules
+
+## Customer
+
+Can:
+
+* manage own profile
+* create requests
+* view own requests
+* accept offers
+* create reviews
+
+---
+
+## Craftsman
+
+Can:
+
+* manage own profile
+* view matching requests
+* create offers
+* manage accepted jobs
+
+---
+
+## Admin
+
+Can:
+
+* manage users
+* verify craftsmen
+* manage categories
+
+---
+
+# 15. API Design Principles
+
+The API follows:
+
+* REST principles
+* Resource-oriented URLs
+* Stateless communication
+* DTO based responses
+* Validation on backend
+* Consistent error handling
+
+---
+
+# 16. Future OpenAPI Documentation
+
+The API should provide automatic documentation using:
+
+```text
+SpringDoc OpenAPI / Swagger
+```
+
+Example:
+
+```
+/swagger-ui.html
+```
+
+---
+
+# Endpoints Summary
+
+```text
+AUTH
+
+POST   /auth/register
+POST   /auth/login
+
+
+USERS
+
+GET    /users/me
+
+
+CUSTOMERS
+
+GET    /customers/profile
+PUT    /customers/profile
+
+
+CRAFTSMEN
+
+POST   /craftsmen/profile
+GET    /craftsmen/{id}
+
+
+REQUESTS
+
+POST   /service-requests
+GET    /service-requests/my
+GET    /service-requests/{id}
+
+
+OFFERS
+
+POST   /offers
+GET    /service-requests/{id}/offers
+PATCH  /offers/{id}/accept
+
+
+REVIEWS
+
+POST   /reviews
+GET    /craftsmen/{id}/reviews
+```

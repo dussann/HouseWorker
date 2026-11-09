@@ -1,0 +1,437 @@
+# FixHome - Predložene faze razvoja MVP
+
+## Verzija
+
+Version: 1.0
+
+Status: Draft
+
+---
+
+# 1. Cilj
+
+Ovaj dokument predstavlja konkretan predlog faza razvoja za MVP platforme FixHome.
+
+Cilj je da se fokusira na tržišni proces:
+
+Customer -> creates request -> craftsmen send offers -> customer accepts -> work completed -> review
+
+Da bi se izbegla prevelika složenost i odlaganje validacije proizvoda, MVP treba da bude ograničen na ključne funkcionalnosti.
+
+---
+
+# 2. Faza 1 - Foundation
+
+## Cilj
+
+Napraviti čvrstu osnovu za razvoj aplikacije.
+
+## Zadaci
+
+- Kreirati Git repository
+- Postaviti Spring Boot projekat
+- Konfigurisati Java 21
+- Konfigurisati Maven
+- Definisati paketnu strukturu projekta
+- Postaviti PostgreSQL bazu
+- Postaviti Flyway migracije
+- Postaviti Docker Compose
+- Konfigurisati osnovno okruženje za razvoj
+
+## Deliverables
+
+- Pokrenut backend server
+- Povezana PostgreSQL baza
+- Prva migracija
+- Osnovna struktura aplikacije
+
+---
+
+# 3. Faza 2 - Autentifikacija i autorizacija
+
+## Cilj
+
+Implementirati bezbedan i kontrolisan pristup aplikaciji.
+
+## Zadaci
+
+- User entitet
+- Role entitet
+- Registracija korisnika
+- Login korisnika
+- JWT access token
+- Refresh token
+- BCrypt password hashing
+- Spring Security konfiguracija
+- Role-based authorization
+- Resource ownership validation
+
+## Rukovodeća pravila
+
+- CUSTOMER, CRAFTSMAN, ADMIN
+- Svi zaštiteni endpointi zahtevaju validan JWT
+- Password se ne vraća u API odgovoru
+- Svaki korisnik ima tačno jednu rolu
+
+## Deliverables
+
+- Sigurni API
+- Ograničen pristup po rolama
+- Testovi autentifikacije i autorizacije
+
+---
+
+# 4. Faza 3 - Upravljanje profilima korisnika
+
+## Cilj
+
+Omogućiti korisnicima da vode svoje profile i da budu spremni za marketplace tok.
+
+## Zadaci
+
+### Customer profile
+
+- First name
+- Last name
+- Address
+- Latitude/longitude
+- Update profile
+
+### Craftsman profile
+
+- Company name
+- Description
+- Experience years
+- Categories
+- Verification status
+- Update profile
+
+### Admin
+
+- Pregled korisnika
+- Pregled profila
+
+## Deliverables
+
+- Kompletan user profile module
+- Osnovna verifikacija majstora
+
+---
+
+# 5. Faza 4 - Kategorije usluga
+
+## Cilj
+
+Definisati i organizovati tipove usluga koje platforma podržava.
+
+## Zadaci
+
+- Predefinisane kategorije usluga
+- Admin može da dodaje/menja/uklanja kategorije
+- Craftsman bira kategorije koje pruža
+- Service request mora da sadrži validnu kategoriju
+
+## Primer kategorija
+
+- Electrician
+- Plumber
+- Painter
+- Carpenter
+- Locksmith
+- HVAC
+- Appliance Repair
+
+## Deliverables
+
+- Category management
+- Kategorije povezane sa craftman profilima i requestovima
+
+---
+
+# 6. Faza 5 - Marketplace core: Service requests
+
+## Cilj
+
+Omogućiti korisnicima da kreiraju zahteve za usluge i da ih majstori vide.
+
+## Zadaci
+
+- Customer kreira service request
+- Biranje kategorije
+- Opis problema
+- Upload slike
+- Unos lokacije
+- Prikaz sopstvenih requestova
+- Pregled detalja requesta
+- Status lifecycle
+
+## Statusi
+
+NEW
+
+↓
+
+WAITING_FOR_OFFERS
+
+↓
+
+ACCEPTED
+
+↓
+
+IN_PROGRESS
+
+↓
+
+COMPLETED
+
+↓
+
+CANCELLED
+
+## Deliverables
+
+- Potpun marketplace zahtev za uslugu
+- Upravljački tok request statusa
+
+---
+
+# 7. Faza 6 - Ponude majstora
+
+## Cilj
+
+Omogućiti majstorima da odgovaraju na zahteve i da konkuriraju na osnovu ponuda.
+
+## Zadaci
+
+- Craftsman vidi matching requestove
+- Craftsman kreira ponudu
+- Ponuda sadrži cenu i poruku
+- Customer vidi ponude
+- Customer prihvata jednu ponudu
+- Ostale ponude bivaju rejected
+
+## Poslovna pravila
+
+- Craftsman može da dodaje ponudu samo za kategorije koje pruža
+- Customer može da prihvati samo jednu ponudu po requestu
+- Tek nakon prihvatanja ponude se zatvara proces razmatranja ponuda
+
+## Deliverables
+
+- Kompletan workflow ponuda -> prihvatanje -> usluga
+
+---
+
+# 8. Faza 7 - Job lifecycle i status menadžment
+
+## Cilj
+
+Upravljati obavljanjem posla od prihvatanja do završetka.
+
+## Zadaci
+
+- Request status prelazi iz ACCEPTED u IN_PROGRESS
+- Posao se prati tokom izvršenja
+- Customer i craftsman imaju pregled statusa
+- Nakon završetka request prelazi u COMPLETED
+
+## Deliverables
+
+- Jasan operativni tok zadatka
+- Potpuno praćenje statusa usluge
+
+---
+
+# 9. Faza 8 - Reviews i reputacija
+
+## Cilj
+
+Povećati poverenje platforme i omogućiti ocenjivanje kvalitetnog rada.
+
+## Zadaci
+
+- Customer može da ostavi review nakon završene usluge
+- Review sadrži rating 1-5 i komentar
+- Sistem validira da je usluga završena
+- Craftsman rating se može izračunati na osnovu reviews
+
+## Pravila
+
+- Review je dozvoljen tek nakon COMPLETED statusa
+- Craftsman ne može da recenzira customer-a
+
+## Deliverables
+
+- Reputacioni sistem
+- Povećanje poverenja među korisnicima
+
+---
+
+# 10. Faza 9 - Admin funkcionalnosti
+
+## Cilj
+
+Omogućiti upravljanje platformom i kvalitet usluga.
+
+## Zadaci
+
+- Pregled svih korisnika
+- Verifikacija craftsman profila
+- Upravljanje kategorijama
+- Moderacija sadržaja
+- Pregled aktivnosti sistema
+
+## Deliverables
+
+- Admin dashboard
+- Kontrola kvaliteta i sigurnosti platforme
+
+---
+
+# 11. Faza 10 - Backend hardening i production readiness
+
+## Cilj
+
+Pripremiti backend za ozbiljan razvoj i produkciju.
+
+## Zadaci
+
+- Global exception handling
+- DTO validacija
+- Logging
+- Swagger/OpenAPI dokumentacija
+- Unit tests
+- Integration tests
+- Database migration discipline
+- API error handling
+
+## Deliverables
+
+- Stabilan i testabilan backend
+- API spreman za integraciju sa frontendom
+
+---
+
+# 12. Faza 11 - React Native aplikacija
+
+## Cilj
+
+Napraviti mobilnu aplikaciju za kupce i majstore.
+
+## Customer app screens
+
+- Login
+- Registration
+- Dashboard
+- Create request
+- My requests
+- Offers
+- Request details
+- Profile
+- Review
+
+## Craftsman app screens
+
+- Registration
+- Onboarding
+- Available requests
+- Send offer
+- Active jobs
+- Profile
+- Reviews
+
+## Deliverables
+
+- Funkcionalna mobilna aplikacija za MVP
+
+---
+
+# 13. Faza 12 - Admin panel
+
+## Cilj
+
+Omogućiti adminsko upravljanje platformom.
+
+## Tehnologija
+
+- React
+- Material UI
+
+## Funkcionalnosti
+
+- User management
+- Craftsman verification
+- Category management
+- Platform monitoring
+
+## Deliverables
+
+- Admin panel za operaciono upravljanje
+
+---
+
+# 14. Faza 13 - Advanced features (nakon validacije MVP)
+
+## Cilj
+
+Dodati napredne funkcije nakon što je marketplace pokazao vrednost.
+
+## Predložene funkcije
+
+- Real-time chat
+- Push notifications
+- Maps integration
+- Payments
+- AI-based request classification
+- Invoices
+- Subscription plans
+
+## Pravilo
+
+Ove funkcije ne treba da budu deo prvog MVP-a, jer mogu da odlože validaciju proizvoda i povećaju kompleksnost.
+
+---
+
+# 15. Prioritet razvoja
+
+## Critical path
+
+1. Authentication
+2. Profiles
+3. Categories
+4. Service requests
+5. Offers
+6. Status lifecycle
+7. Reviews
+8. Admin verification
+9. Tests + documentation
+
+## Deferred
+
+- Chat
+- Push notifications
+- Payments
+- AI features
+- Maps
+- Multilingual support
+
+---
+
+# 16. Final recommendation
+
+Najbolji pristup za razvoj je da se MVP fokusira samo na kritičan tok:
+
+Customer registration -> create request -> craftsmen send offers -> customer accepts offer -> service completion -> customer review
+
+To daje pregledan, koristan i testabilan proizvod bez nepotrebne složenosti.
+
+---
+
+# 17. Zaključak
+
+Ove faze predstavljaju praktičan i realan plan za razvoj FixHome platforme.
+
+Cilj je da se najpre validira tržišna funkcija, a zatim postupno dodaju dodatne inovacije.
+
+Focus MVP-a treba da bude korisna i pouzdana marketplace aplikacija, a ne najveći sistem odmah na početku.

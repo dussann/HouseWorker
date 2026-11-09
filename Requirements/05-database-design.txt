@@ -1,0 +1,515 @@
+# FixHome - Database Design
+
+## Version
+
+**Version:** 1.0
+
+**Status:** Draft
+
+---
+
+# 1. Database Overview
+
+FixHome uses PostgreSQL as the primary relational database.
+
+The database is designed around the marketplace domain:
+
+* users
+* customers
+* craftsmen
+* service requests
+* offers
+* reviews
+
+The database follows a normalized relational model with clear foreign key relationships.
+
+---
+
+# 2. Database Technology
+
+Database:
+
+```text
+PostgreSQL
+```
+
+ORM:
+
+```text
+Spring Data JPA + Hibernate
+```
+
+Migration tool:
+
+```text
+Flyway
+```
+
+Caching layer:
+
+```text
+Redis (future optimization)
+```
+
+---
+
+# 3. Naming Conventions
+
+Database conventions:
+
+* Table names: snake_case
+* Column names: snake_case
+* Primary keys: id
+* Foreign keys: entity_id
+
+Examples:
+
+```text
+service_requests
+
+customer_id
+
+created_at
+```
+
+---
+
+# 4. Common Audit Fields
+
+Most business tables contain:
+
+```text
+id
+created_at
+updated_at
+```
+
+Purpose:
+
+* tracking entity creation
+* tracking modifications
+* supporting future auditing
+
+---
+
+# 5. User Table
+
+## users
+
+Stores authentication and authorization information.
+
+Structure:
+
+| Column     | Type         | Description   |
+| ---------- | ------------ | ------------- |
+| id         | BIGSERIAL    | Primary key   |
+| email      | VARCHAR(255) | Unique email  |
+| password   | VARCHAR(255) | BCrypt hash   |
+| phone      | VARCHAR(50)  | Phone number  |
+| role       | VARCHAR(50)  | User role     |
+| created_at | TIMESTAMP    | Creation time |
+| updated_at | TIMESTAMP    | Update time   |
+
+Roles:
+
+```text
+CUSTOMER
+CRAFTSMAN
+ADMIN
+```
+
+Constraints:
+
+* email must be unique
+* password cannot be null
+* role cannot be null
+
+---
+
+# 6. Customer Profile Table
+
+## customer_profiles
+
+Stores customer-specific information.
+
+Structure:
+
+| Column     | Type         |
+| ---------- | ------------ |
+| id         | BIGSERIAL    |
+| user_id    | BIGINT       |
+| first_name | VARCHAR(100) |
+| last_name  | VARCHAR(100) |
+| address    | VARCHAR(255) |
+| latitude   | DECIMAL      |
+| longitude  | DECIMAL      |
+| created_at | TIMESTAMP    |
+| updated_at | TIMESTAMP    |
+
+Relationship:
+
+```text
+users
+ |
+ |
+customer_profiles
+```
+
+Constraint:
+
+```text
+One User -> One CustomerProfile
+```
+
+---
+
+# 7. Craftsman Profile Table
+
+## craftsman_profiles
+
+Stores professional information.
+
+Structure:
+
+| Column           | Type         |
+| ---------------- | ------------ |
+| id               | BIGSERIAL    |
+| user_id          | BIGINT       |
+| company_name     | VARCHAR(255) |
+| description      | TEXT         |
+| experience_years | INTEGER      |
+| verified         | BOOLEAN      |
+| rating           | DECIMAL      |
+| created_at       | TIMESTAMP    |
+| updated_at       | TIMESTAMP    |
+
+Relationship:
+
+```text
+users
+ |
+ |
+craftsman_profiles
+```
+
+---
+
+# 8. Category Table
+
+## categories
+
+Stores available service categories.
+
+Example:
+
+```text
+1 - Electrician
+2 - Plumber
+3 - HVAC
+4 - Painter
+```
+
+Structure:
+
+| Column     | Type         |
+| ---------- | ------------ |
+| id         | BIGSERIAL    |
+| name       | VARCHAR(100) |
+| created_at | TIMESTAMP    |
+
+---
+
+# 9. Craftsman Categories Table
+
+## craftsman_categories
+
+Many-to-many relationship.
+
+Purpose:
+
+A craftsman can provide multiple services.
+
+Structure:
+
+| Column       | Type      |
+| ------------ | --------- |
+| id           | BIGSERIAL |
+| craftsman_id | BIGINT    |
+| category_id  | BIGINT    |
+
+Example:
+
+```text
+Marko
+
+    |
+    + Electrician
+    + HVAC
+```
+
+---
+
+# 10. Service Request Table
+
+## service_requests
+
+Main marketplace entity.
+
+Structure:
+
+| Column      | Type      |
+| ----------- | --------- |
+| id          | BIGSERIAL |
+| customer_id | BIGINT    |
+| category_id | BIGINT    |
+| description | TEXT      |
+| image_url   | VARCHAR   |
+| latitude    | DECIMAL   |
+| longitude   | DECIMAL   |
+| status      | VARCHAR   |
+| created_at  | TIMESTAMP |
+| updated_at  | TIMESTAMP |
+
+Status values:
+
+```text
+NEW
+
+WAITING_FOR_OFFERS
+
+ACCEPTED
+
+IN_PROGRESS
+
+COMPLETED
+
+CANCELLED
+```
+
+Relationships:
+
+```text
+Customer
+    |
+    |
+ServiceRequest
+    |
+    |
+Category
+```
+
+---
+
+# 11. Offer Table
+
+## offers
+
+Stores craftsmen proposals.
+
+Structure:
+
+| Column       | Type          |
+| ------------ | ------------- |
+| id           | BIGSERIAL     |
+| request_id   | BIGINT        |
+| craftsman_id | BIGINT        |
+| price        | DECIMAL(10,2) |
+| message      | TEXT          |
+| status       | VARCHAR       |
+| created_at   | TIMESTAMP     |
+| updated_at   | TIMESTAMP     |
+
+Status:
+
+```text
+PENDING
+
+ACCEPTED
+
+REJECTED
+```
+
+---
+
+# 12. Review Table
+
+## reviews
+
+Stores customer feedback.
+
+Structure:
+
+| Column       | Type      |
+| ------------ | --------- |
+| id           | BIGSERIAL |
+| request_id   | BIGINT    |
+| craftsman_id | BIGINT    |
+| rating       | INTEGER   |
+| comment      | TEXT      |
+| created_at   | TIMESTAMP |
+
+Constraints:
+
+Rating:
+
+```text
+1 <= rating <= 5
+```
+
+---
+
+# 13. Database Relationships
+
+Complete overview:
+
+```text
+users
+ |
+ +----------------+
+ |                |
+ v                v
+
+customer_profiles     craftsman_profiles
+                            |
+                            |
+                    craftsman_categories
+                            |
+                            |
+                       categories
+
+
+customer_profiles
+
+        |
+        |
+        v
+
+service_requests
+
+        |
+        |
+        v
+
+offers
+
+        |
+        |
+        v
+
+reviews
+
+```
+
+---
+
+# 14. Index Strategy
+
+Initial indexes:
+
+## users
+
+```sql
+CREATE UNIQUE INDEX idx_users_email
+ON users(email);
+```
+
+---
+
+## service_requests
+
+For future location and filtering:
+
+```text
+customer_id
+
+category_id
+
+status
+
+created_at
+```
+
+---
+
+## offers
+
+```text
+request_id
+
+craftsman_id
+```
+
+---
+
+# 15. Future Database Improvements
+
+Possible future additions:
+
+## Soft Delete
+
+Add:
+
+```text
+deleted_at
+```
+
+for business entities.
+
+---
+
+## Location Search
+
+Possible use:
+
+* PostgreSQL PostGIS extension
+
+For:
+
+* nearby craftsmen
+* distance calculation
+* map search
+
+---
+
+## Search Optimization
+
+Possible future:
+
+* Elasticsearch
+* PostgreSQL full-text search
+
+---
+
+# 16. Flyway Migration Structure
+
+Example:
+
+```text
+src/main/resources/db/migration
+
+V1__create_users.sql
+
+V2__create_profiles.sql
+
+V3__create_categories.sql
+
+V4__create_service_requests.sql
+
+V5__create_offers.sql
+
+V6__create_reviews.sql
+```
+
+---
+
+# 17. Database Design Principles
+
+The database should:
+
+* protect data integrity
+* enforce relationships
+* support future growth
+* remain simple for MVP
+* avoid premature complexity
+
+The first version should prioritize correctness and maintainability over optimization.

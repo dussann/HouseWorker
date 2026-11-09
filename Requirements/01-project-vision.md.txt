@@ -1,0 +1,245 @@
+# FixHome - Project Vision
+
+## Version
+
+**Version:** 1.0
+
+**Status:** Draft
+
+**Last Updated:** August 2026
+
+---
+
+# 1. Vision
+
+FixHome is a digital marketplace that connects homeowners with verified craftsmen for home maintenance and repair services.
+
+The goal is to simplify the process of finding reliable professionals, requesting home services, comparing offers, communicating with craftsmen, and managing service requests from a single application.
+
+The initial launch will target the Serbian market, focusing on Belgrade and Novi Sad, with a long-term vision of expanding throughout the Balkans.
+
+---
+
+# 2. Problem Statement
+
+Finding trustworthy craftsmen is often difficult.
+
+Customers usually rely on:
+
+* personal recommendations
+* social media groups
+* classified ads
+* random internet searches
+
+These approaches create several problems:
+
+* difficult to verify craftsmen
+* unclear pricing
+* slow communication
+* no centralized request management
+* no service history
+* limited customer reviews
+
+Craftsmen also face challenges:
+
+* difficulty finding new customers
+* inconsistent workload
+* lack of professional online presence
+* inefficient communication
+
+FixHome aims to solve these problems by providing a centralized marketplace.
+
+---
+
+# 3. Product Goals
+
+The primary goals of the application are:
+
+* Connect customers with verified craftsmen.
+* Simplify the process of requesting home services.
+* Allow craftsmen to compete by sending offers.
+* Increase customer trust through ratings and reviews.
+* Provide transparent communication between both parties.
+* Build a scalable platform that can support multiple cities and countries.
+
+---
+
+# 4. Target Users
+
+## Customer
+
+People who need home repair or maintenance services.
+
+Typical examples include:
+
+* leaking pipes
+* electrical failures
+* painting
+* appliance repair
+* air conditioning maintenance
+* locksmith services
+* carpentry
+
+---
+
+## Craftsman
+
+Professionals who provide home services.
+
+Examples:
+
+* electrician
+* plumber
+* painter
+* carpenter
+* locksmith
+* HVAC technician
+* appliance repair technician
+
+---
+
+## Administrator
+
+Responsible for managing the platform.
+
+Responsibilities include:
+
+* user management
+* craftsman verification
+* category management
+* platform moderation
+
+---
+
+# 5. Core Features
+
+## Customer Features
+
+* User registration
+* Login
+* Customer profile
+* Create service requests
+* Upload images
+* Select category
+* Specify service location
+* Receive multiple offers
+* Accept one offer
+* Chat with craftsman
+* Track service progress
+* Leave reviews
+
+---
+
+## Craftsman Features
+
+* Registration
+* Professional profile
+* Service categories
+* Receive matching requests
+* Submit offers
+* Chat with customers
+* Manage active jobs
+* View ratings and reviews
+
+---
+
+## Administrator Features
+
+* Manage users
+* Verify craftsmen
+* Manage categories
+* Monitor platform activity
+
+---
+
+# 6. Business Model
+
+FixHome is designed as a marketplace platform.
+
+Potential monetization options include:
+
+* commission per completed service
+* premium craftsman subscriptions
+* promoted craftsmen
+* featured listings
+* advertising partnerships
+
+The initial MVP focuses on validating the marketplace before introducing monetization.
+
+---
+
+# 7. MVP Scope
+
+The first version of the application should include:
+
+* Authentication
+* Customer profiles
+* Craftsman profiles
+* Service categories
+* Service requests
+* Image upload
+* Offer management
+* Reviews
+* Basic administration
+
+The MVP should validate the core marketplace workflow before adding advanced features.
+
+---
+
+# 8. Future Features
+
+Future releases may include:
+
+* real-time chat
+* push notifications
+* integrated payments
+* GPS navigation
+* nearby craftsman search
+* appointment scheduling
+* recurring maintenance reminders
+* AI-assisted request categorization
+* document and invoice management
+* multilingual support
+* multi-country deployment
+
+---
+
+# 9. Non-Functional Requirements
+
+The application should be:
+
+* secure
+* responsive
+* scalable
+* maintainable
+* modular
+* production-ready
+
+The architecture should support future migration from an MVP to a large-scale distributed platform.
+
+---
+
+# 10. Success Metrics
+
+The product will be considered successful if it can:
+
+* simplify the process of finding craftsmen
+* reduce response time for service requests
+* increase transparency through offers and reviews
+* provide a positive user experience
+* support future growth without major architectural changes
+
+---
+
+# 11. Long-Term Vision
+
+FixHome should become the leading digital platform for home services in the Balkan region.
+
+The platform should be recognized for:
+
+* trusted craftsmen
+* transparent pricing
+* fast communication
+* excellent user experience
+* reliable service management
+* scalable architecture suitable for continuous growth

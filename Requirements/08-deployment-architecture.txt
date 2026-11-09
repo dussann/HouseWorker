@@ -1,0 +1,538 @@
+# FixHome - Deployment Architecture
+
+## Version
+
+**Version:** 1.0
+
+**Status:** Draft
+
+---
+
+# 1. Overview
+
+This document describes the deployment architecture of the FixHome platform.
+
+The architecture supports:
+
+* local development
+* testing environment
+* production deployment
+
+The initial deployment approach follows a simple and scalable architecture.
+
+---
+
+# 2. Deployment Goals
+
+The deployment architecture should provide:
+
+* Easy development setup
+* Reliable application execution
+* Secure configuration management
+* Database persistence
+* Ability to scale individual components
+* Simple maintenance
+
+---
+
+# 3. High-Level Production Architecture
+
+```text
+                         Users
+
+                           |
+                           |
+                     HTTPS Request
+
+                           |
+                           v
+
+                 +----------------+
+                 | Load Balancer  |
+                 | (Future)       |
+                 +--------+-------+
+                          |
+                          |
+              +-----------v------------+
+              | Spring Boot Backend   |
+              | Java 21               |
+              | Docker Container      |
+              +-----------+-----------+
+                          |
+          +---------------+---------------+
+          |                               |
+          v                               v
+
+   +-------------+                +--------------+
+   | PostgreSQL  |                | Redis        |
+   | Database    |                | Cache        |
+   +-------------+                +--------------+
+
+                          |
+                          v
+
+                  +---------------+
+                  | Object Storage|
+                  | Cloudflare R2 |
+                  | Images        |
+                  +---------------+
+
+                          |
+                          v
+
+                  Firebase Cloud Messaging
+                  (Future Notifications)
+```
+
+---
+
+# 4. Application Components
+
+## Backend Service
+
+Technology:
+
+```text
+Java 21
+Spring Boot 3
+```
+
+Deployment:
+
+```text
+Docker Container
+```
+
+Responsibilities:
+
+* REST API
+* Authentication
+* Business logic
+* Database communication
+
+---
+
+## Database
+
+Technology:
+
+```text
+PostgreSQL
+```
+
+Responsibilities:
+
+* Store application data
+* Maintain relationships
+* Transaction management
+
+Stored data:
+
+* Users
+* Profiles
+* Requests
+* Offers
+* Reviews
+
+---
+
+## Cache Layer
+
+Technology:
+
+```text
+Redis
+```
+
+Initial usage:
+
+* Session related data (future)
+* Frequently requested data
+* Rate limiting
+
+Possible future usage:
+
+* Real-time features
+* Notifications
+* Chat support
+
+---
+
+## File Storage
+
+Technology:
+
+```text
+Cloudflare R2
+or
+Amazon S3
+```
+
+Purpose:
+
+Store:
+
+* Request images
+* Profile images
+* Documents (future)
+
+Database stores only:
+
+```text
+image_url
+```
+
+not binary files.
+
+---
+
+# 5. Environment Architecture
+
+The system should have separate environments.
+
+---
+
+# Development Environment
+
+Purpose:
+
+Local development.
+
+Components:
+
+```text
+Spring Boot
+
+PostgreSQL Docker Container
+
+Redis Docker Container
+
+Local Storage
+```
+
+---
+
+# Testing Environment
+
+Purpose:
+
+Automated testing.
+
+Components:
+
+```text
+Backend Application
+
+Test Database
+
+CI Pipeline
+```
+
+---
+
+# Production Environment
+
+Purpose:
+
+Real users.
+
+Components:
+
+```text
+Backend Server
+
+PostgreSQL Database
+
+Redis
+
+Object Storage
+
+Monitoring
+```
+
+---
+
+# 6. Docker Architecture
+
+The project should provide:
+
+```text
+docker-compose.yml
+```
+
+for local development.
+
+Example:
+
+```text
+fixhome
+
+|
++-- backend
+|
++-- database
+|
++-- redis
+|
++-- docker-compose.yml
+```
+
+---
+
+Development startup:
+
+```bash
+docker compose up
+```
+
+should start:
+
+* PostgreSQL
+* Redis
+* Backend dependencies
+
+---
+
+# 7. Configuration Management
+
+Sensitive configuration must never be stored in source code.
+
+Examples:
+
+Database:
+
+```text
+DB_USERNAME
+DB_PASSWORD
+DB_URL
+```
+
+JWT:
+
+```text
+JWT_SECRET
+JWT_EXPIRATION
+```
+
+Storage:
+
+```text
+R2_ACCESS_KEY
+R2_SECRET_KEY
+```
+
+Firebase:
+
+```text
+FCM_KEY
+```
+
+---
+
+# 8. Application Profiles
+
+Spring profiles:
+
+```text
+application-dev.yml
+
+application-test.yml
+
+application-prod.yml
+```
+
+---
+
+Development:
+
+```yaml
+spring:
+  datasource:
+    url: localhost
+```
+
+Production:
+
+```yaml
+spring:
+  datasource:
+    url: production_database
+```
+
+---
+
+# 9. CI/CD Pipeline
+
+Future automated pipeline:
+
+```text
+Developer
+
+   |
+
+Git Push
+
+   |
+
+GitHub Actions
+
+   |
+
+Run Tests
+
+   |
+
+Build Docker Image
+
+   |
+
+Deploy Application
+```
+
+---
+
+Pipeline steps:
+
+1. Checkout source code
+2. Build application
+3. Run unit tests
+4. Run integration tests
+5. Create Docker image
+6. Deploy
+
+---
+
+# 10. Database Migration
+
+Database changes are managed using:
+
+```text
+Flyway
+```
+
+Deployment flow:
+
+```text
+Application Start
+
+        |
+
+Flyway executes migrations
+
+        |
+
+Database updated
+
+        |
+
+Application starts
+```
+
+---
+
+# 11. Logging
+
+Production logging should include:
+
+* Application errors
+* Authentication events
+* Important business actions
+
+Possible future tools:
+
+* ELK Stack
+* Grafana Loki
+* Cloud monitoring
+
+---
+
+# 12. Monitoring
+
+Future monitoring:
+
+Application metrics:
+
+* API response time
+* Error rate
+* Database performance
+* User activity
+
+Possible tools:
+
+* Spring Actuator
+* Prometheus
+* Grafana
+
+---
+
+# 13. Backup Strategy
+
+Database:
+
+* Regular PostgreSQL backups
+
+Images:
+
+* Object storage versioning
+
+Important data:
+
+* User accounts
+* Service history
+* Reviews
+
+---
+
+# 14. Scalability Strategy
+
+Initial architecture:
+
+```text
+Single Spring Boot instance
++
+Single PostgreSQL database
+```
+
+Future scaling:
+
+```text
+Load Balancer
+
+        |
+
+Multiple Backend Instances
+
+        |
+
+Shared PostgreSQL
+
+        |
+
+Redis Cluster
+```
+
+---
+
+# 15. Security Deployment Rules
+
+Production must use:
+
+* HTTPS
+* Secure environment variables
+* Database access restrictions
+* Firewall rules
+* Regular dependency updates
+
+---
+
+# 16. Deployment Principles
+
+The FixHome deployment strategy follows:
+
+* Infrastructure simplicity
+* Automation
+* Security
+* Observability
+* Incremental scaling
+
+The system should grow only when business requirements require additional complexity.

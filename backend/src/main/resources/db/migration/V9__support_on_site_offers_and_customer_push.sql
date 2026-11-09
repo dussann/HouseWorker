@@ -1,0 +1,6 @@
+ALTER TABLE offers
+    ALTER COLUMN price DROP NOT NULL,
+    ADD COLUMN agree_on_site BOOLEAN NOT NULL DEFAULT FALSE;
+
+ALTER TABLE users
+    ADD COLUMN expo_push_token VARCHAR(255);
